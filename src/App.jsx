@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import './App.css'
 
 function App() {
@@ -8,10 +7,16 @@ function App() {
   const doubleNumber = useMemo(() => {
     return slowFunction(number)
   }, [number]) 
-  const themeStyles = {
-    backgroundColor: dark ? 'black' : 'white',
-    color: dark ? 'white' : 'black'
-  }
+    //for the proccess of Referential Equality
+  const themeStyles = useMemo(() => {
+    return {
+      backgroundColor: dark ? 'black' : 'white',
+      color: dark ? 'white' : 'black'
+    }
+  }, [dark])
+  useEffect(() => {
+    console.log('Theme Changed')
+  }, [themeStyles])
 
   return (
     <>
