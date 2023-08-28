@@ -1,38 +1,43 @@
-import { useReducer } from 'react'
+import { useState } from 'react'
 import './App.css'
+import { useReducer } from 'react'
+import Todo from './Todo'
 
 const ACTIONS = {
-  INCREMENT: 'increment',
-  DECREMENT: 'decrement'
+  ADD_TODO: 'add-todo'
 }
 
-function reducer (state, action) {
+function reducer (todos, action) {
   switch(action.type) {
-    case ACTIONS.INCREMENT:
-      return { count: state.count + 1 }
-    case ACTIONS.DECREMENT:
-      return { count: state.count - 1 }
-    default:
-      return state
+    case ACTIONS.ADD_TODO:
+      return [...todos, newTodo(action.payload.name)]
   }
+}
+
+function  newTodo(value) {
+  return { id: Date.now(), name: value, complete: false }
 }
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, { count: 0 })
+  const [todos, dispatch] = useReducer(reducer, [])
+  const [name, setName] = useState('')
 
-  function increment() {
-    dispatch({ type: ACTIONS.INCREMENT })
+  function handleSubmit(e) {
+    e.preventDefault()
+    dispatch({ type: ACTIONS.ADD_TODO, payload: { name: name } })
+    setName('')
   }
 
-  function decrement() {
-    dispatch({ type: ACTIONS.DECREMENT})
-  }
+  console.log(todos)
 
   return (
     <>
-    <button onClick={decrement}>-</button>
-    <span>{state.count}</span>
-    <button onClick={increment}>+</button>
+      <form onSubmit={handleSubmit}>
+        <input type="text" value={name} onChange={e => setName(e.target.value)} />
+      </form>
+      {todos.map(todo => {
+        return <Todo key={todo.id} todo={todo} />
+      })}
     </>
   )
 }
