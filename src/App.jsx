@@ -1,16 +1,23 @@
-import { useState } from 'react'
+import { useState, useReducer } from 'react'
 import './App.css'
-import { useReducer } from 'react'
 import Todo from './Todo'
 
-const ACTIONS = {
-  ADD_TODO: 'add-todo'
+export const ACTIONS = {
+  ADD_TODO: 'add-todo',
+  TOGGLE_TODO: 'toggle-todo'
 }
 
 function reducer (todos, action) {
   switch(action.type) {
     case ACTIONS.ADD_TODO:
       return [...todos, newTodo(action.payload.name)]
+    case ACTIONS.TOGGLE_TODO:
+      return todos.map(todo => {
+        if (todo.id === action.payload.id) {
+          return { ...todo, complete: !todo.complete }
+        }
+        return todo
+      })
   }
 }
 
@@ -36,7 +43,7 @@ function App() {
         <input type="text" value={name} onChange={e => setName(e.target.value)} />
       </form>
       {todos.map(todo => {
-        return <Todo key={todo.id} todo={todo} />
+        return <Todo key={todo.id} todo={todo} dispatch={dispatch} />
       })}
     </>
   )
